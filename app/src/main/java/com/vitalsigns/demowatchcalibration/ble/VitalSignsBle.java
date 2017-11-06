@@ -139,17 +139,25 @@ public class VitalSignsBle {
 
     @Override
     public void bleGattState() {
-
+      Log.d(LOG_TAG, "bleGattState()");
     }
 
     @Override
     public void bleTransmitTimeout() {
-
+      Log.d(LOG_TAG, "bleTransmitTimeout()");
+      if(mBleEvent != null)
+      {
+        mBleEvent.onDisconnect("bleTransmitTimeout");
+      }
     }
 
     @Override
     public void bleAckError(String s) {
-
+      Log.d(LOG_TAG, "bleAckError()");
+      if(mBleEvent != null)
+      {
+        mBleEvent.onDisconnect(s);
+      }
     }
   };
 

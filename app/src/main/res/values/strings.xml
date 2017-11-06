@@ -1,5 +1,4 @@
 <resources>
   <string name="app_name">DemoWatchCalibration</string>
-  <string name="request_permission_coarse_location_title">This app needs location access</string>
-  <string name="request_permission_coarse_location_content">Please grant location access so this app.</string>
+  <string name="scan_ble_device">Scan BLE device</string>
 </resources>
