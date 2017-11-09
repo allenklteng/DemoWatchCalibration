@@ -14,6 +14,7 @@ import com.vitalsigns.sdk.ble.BlePedometerData;
 import com.vitalsigns.sdk.ble.BleService;
 import com.vitalsigns.sdk.ble.BleSleepData;
 import com.vitalsigns.sdk.ble.BleSwitchData;
+import com.vitalsigns.sdk.utility.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +36,13 @@ public class VitalSignsBle {
   private Context mContext = null;
   private boolean mBleServiceBind = false;
   private BleService mBleService = null;
+  private boolean bSendTimePosCmd = false;
+  private boolean bSendTimeSetCmd = false;
 
   public interface BleEvent
   {
     void onConnect(String strDevicename);
     void onDisconnect(String strError);
-    void onBindFinish();
   }
 
   public VitalSignsBle (@NotNull Context context, @NotNull BleEvent event)
@@ -63,10 +65,6 @@ public class VitalSignsBle {
                                  onStatusListener,
                                  onDataListener,
                                  onBleRawListener);
-      if(mBleEvent != null)
-      {
-        mBleEvent.onBindFinish();
-      }
     }
 
     @Override
@@ -228,7 +226,24 @@ public class VitalSignsBle {
   private BleCmdService.OnBleRawListener onBleRawListener = new BleCmdService.OnBleRawListener() {
     @Override
     public void ackReceived(byte[] bytes) {
+      if(bSendTimePosCmd)
+      {
+        bSendTimePosCmd = false;
 
+        /// [CC] : This command will set current time to watch ; 11/09/2017
+        bSendTimeSetCmd = true;
+        mBleService.CmdTimeSet(Utility.GetHour(), Utility.GetMinute(), Utility.GetSecond());
+      }
+
+      /// [CC] : Time set finish, disconnect ; 11/09/2017
+      if(bSendTimeSetCmd)
+      {
+        bSendTimeSetCmd = false;
+        if(mBleEvent != null)
+        {
+          mBleEvent.onDisconnect("Calibration finish");
+        }
+      }
     }
   };
 
@@ -293,6 +308,77 @@ public class VitalSignsBle {
       {
         mBleEvent = null;
       }
+    }
+  }
+
+  /**
+   * @brief enterTimeCaliMode
+   *
+   * This command will set watch enter time calibration mode
+   *
+   * @return NULL
+   */
+  public void enterTimeCaliMode()
+  {
+    if(mBleService != null)
+    {
+      mBleService.CmdTimeCali();
+    }
+  }
+
+  /**
+   * @brief timeAdjust
+   *
+   * Adjust pointer by specify value
+   * EX : nHur = 1, hour pointer increase 2 degree
+   *      nMin = -1, minute pointer decrease 2 degree
+   *
+   * @return NULL
+   */
+  public void timeAdjust(int nHur, int nMin, int nSec)
+  {
+    if(mBleService != null)
+    {
+      mBleService.CmdTimeAdjust(nHur, nMin, nSec);
+    }
+  }
+
+  /**
+   * @brief timeAdjustFinish
+   *
+   * This command will tell watch current pointer position
+   * The three argument means the degree of pointer ("12" is degree 0 and clockwise)
+   * hour  90 : hour pointer point to 3
+   * minute 0 : minute pointer point to 0
+   * second 0 : second pointer point to 0
+   *
+   * @return NULL
+   */
+  public void timeAdjustFinish()
+  {
+    if(mBleService != null)
+    {
+      mBleService.CmdTimePos(90, 0, 0);
+      bSendTimePosCmd = true;
+    }
+  }
+
+  /**
+   * @brief timeAdjustCancel
+   *
+   * This command will set current time to watch
+   *
+   * @return NULL
+   */
+  public void timeAdjustCancel()
+  {
+    if(mBleService != null)
+    {
+      bSendTimePosCmd = false;
+      bSendTimeSetCmd = false;
+
+      /// [CC] : This command will set current time to watch ; 11/09/2017
+      mBleService.CmdTimeSet(Utility.GetHour(), Utility.GetMinute(), Utility.GetSecond());
     }
   }
 }

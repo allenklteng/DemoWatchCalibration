@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity
   private static final String LOG_TAG = "MainActivity";
   private VitalSignsBle mVitalSignsBle = null;
   private Button btnScanBLEDevice;
+  private PercentRelativeLayout adjWatchLayout;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -32,17 +34,9 @@ public class MainActivity extends AppCompatActivity
 
     /// [CC] : Keep screen always on ; 11/06/2017
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    btnScanBLEDevice = (Button)findViewById(R.id.scan_ble_device_btn);
-    btnScanBLEDevice.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        /// [CC] : Permission request ; 11/06/2017
-        if(RequestPermission.accessCoarseLocation(MainActivity.this) == true)
-        {
-          showScanBleList();
-        }
-      }
-    });
+
+    /// [CC] : Initial the component of scan button and adjust watch layout ; 11/09/2017
+    viewComponentInitial();
   }
 
   @Override
@@ -51,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     switch(requestCode)
     {
       case PERMISSION_REQUEST_COARSE_LOCATION:
-        /// [CC] : Ble module initial ; 11/06/2017
+        /// [CC] : Ble module initial ; 11/09/2017
         bleInit();
         break;
     }
@@ -63,7 +57,7 @@ public class MainActivity extends AppCompatActivity
 
     if(RequestPermission.accessCoarseLocation(this) == true)
     {
-      /// [CC] : Ble module initial ; 11/06/2017
+      /// [CC] : Ble module initial ; 11/09/2017
       bleInit();
     }
   }
@@ -72,7 +66,7 @@ public class MainActivity extends AppCompatActivity
   protected void onStop() {
     super.onStop();
 
-    /// [CC] : Ble module un-initial ; 11/06/2017
+    /// [CC] : Ble module un-initial ; 11/09/2017
     bleUnInit();
   }
 
@@ -102,7 +96,7 @@ public class MainActivity extends AppCompatActivity
       return;
     }
 
-    /// [CC] : Disconnect with device if connection ; 11/06/2017
+    /// [CC] : Disconnect with device if connection ; 11/09/2017
     if(mVitalSignsBle.isConnect())
     {
       mVitalSignsBle.disconnect();
@@ -132,25 +126,31 @@ public class MainActivity extends AppCompatActivity
           else
           {
             Log.d(LOG_TAG, "strDevicename = " + strDevicename);
+            showWatchAdjView();
+            mVitalSignsBle.enterTimeCaliMode();
           }
         }
       });
     }
 
     @Override
-    public void onDisconnect(String strError) {
-      if(!TextUtils.isEmpty(strError))
-      {
-        if(mVitalSignsBle != null)
-        {
-          mVitalSignsBle.disconnect();
-        }
-      }
-    }
+    public void onDisconnect(final String strError) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          Log.d(LOG_TAG, "onDisconnect ");
 
-    @Override
-    public void onBindFinish() {
-//      showScanBleList();
+          if(!TextUtils.isEmpty(strError))
+          {
+            if(mVitalSignsBle != null)
+            {
+              mVitalSignsBle.disconnect();
+            }
+
+            scanBleDevice();
+          }
+        }
+      });
     }
   };
 
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity
     if(mVitalSignsBle != null)
     {
       /// [CC] : Connect BLE device ; 08/21/2017
+      Log.d(LOG_TAG, "Device address is " + s);
       mVitalSignsBle.connect(s);
     }
   }
@@ -197,5 +198,154 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onSendCrashMsg(String s, String s1) {
     Log.d(LOG_TAG, "onSendCrashMsg");
+  }
+
+  /**
+   * @brief viewComponentInitial
+   *
+   * Initial the component of scan button and adjust watch layout
+   *
+   * @return NULL
+   */
+  private void viewComponentInitial()
+  {
+    /// [CC] : Initial the view of scan BLE device ; 11/09/2017
+    scanComponentInitial();
+
+    /// [CC] : Initial the view of adjust watch ; 11/09/2017
+    adjComponentInitial();
+  }
+
+  /**
+   * @brief scanComponentInitial
+   *
+   * Initial the view of scan BLE device
+   *
+   * @return NULL
+   */
+  private void scanComponentInitial()
+  {
+    /// [CC] : Initial Scan button ; 11/09/2017
+    btnScanBLEDevice = (Button)findViewById(R.id.scan_ble_device_btn);
+    btnScanBLEDevice.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        /// [CC] : Permission request ; 11/06/2017
+        if(RequestPermission.accessCoarseLocation(MainActivity.this) == true)
+        {
+          showScanBleList();
+        }
+      }
+    });
+  }
+
+  /**
+   * @brief adjComponentInitial
+   *
+   * Initial the view of adjust watch
+   *
+   * @return NULL
+   */
+  private void adjComponentInitial()
+  {
+    Button btnHurInc;
+    Button btnHurDec;
+    Button btnMinInc;
+    Button btnMinDec;
+    Button btnSecInc;
+    Button btnSecDec;
+    Button btnAdjOk;
+    Button btnAdjCancel;
+
+    /// [CC] : Initial adjust watch layout ; 11/09/2017
+    adjWatchLayout = (PercentRelativeLayout) findViewById(R.id.adj_pointer_layout);
+    btnHurInc = (Button) findViewById(R.id.adj_hour_pointer_inc);
+    btnHurDec = (Button) findViewById(R.id.adj_hour_pointer_dec);
+    btnMinInc = (Button) findViewById(R.id.adj_minute_pointer_inc);
+    btnMinDec = (Button) findViewById(R.id.adj_minute_pointer_dec);
+    btnSecInc = (Button) findViewById(R.id.adj_second_pointer_inc);
+    btnSecDec = (Button) findViewById(R.id.adj_second_pointer_dec);
+
+    /// [CC] : Set click event ; 11/09/2017
+    setAdjBtnClickEvent(btnHurInc, 1 ,0 ,0);
+    setAdjBtnClickEvent(btnHurDec, -1 ,0 ,0);
+    setAdjBtnClickEvent(btnMinInc, 0 ,1 ,0);
+    setAdjBtnClickEvent(btnMinDec, 0 ,-1 ,0);
+    setAdjBtnClickEvent(btnSecInc, 0 ,0 ,1);
+    setAdjBtnClickEvent(btnSecDec, 0 ,0 ,-1);
+
+    btnAdjOk = (Button) findViewById(R.id.adj_pointer_ok);
+    btnAdjCancel = (Button) findViewById(R.id.adj_pointer_cancel);
+
+    btnAdjOk.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        /// [CC] : disconnect first for scan ; 11/09/2017
+        if((mVitalSignsBle != null) && (mVitalSignsBle.isConnect()))
+        {
+          mVitalSignsBle.timeAdjustFinish();
+        }
+      }
+    });
+
+    btnAdjCancel.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        /// [CC] : disconnect first for scan ; 11/09/2017
+        if((mVitalSignsBle != null) && (mVitalSignsBle.isConnect()))
+        {
+          mVitalSignsBle.timeAdjustCancel();
+          mVitalSignsBle.disconnect();
+        }
+
+        scanBleDevice();
+      }
+    });
+  }
+
+  /**
+   * @brief setAdjBtnClickEvent
+   *
+   * Set click event
+   *
+   * @return NULL
+   */
+  private void setAdjBtnClickEvent(Button btnAdj, final int nHur, final int nMin, final int nSec)
+  {
+    btnAdj.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if((mVitalSignsBle != null) && (mVitalSignsBle.isConnect()))
+        {
+          mVitalSignsBle.timeAdjust(nHur, nMin, nSec);
+        }
+      }
+    });
+  }
+
+  /**
+   * @brief scanBleDevice
+   *
+   * Show scan button and hide adjust layout
+   *
+   * @return NULL
+   */
+  private void scanBleDevice()
+  {
+    btnScanBLEDevice.setVisibility(View.VISIBLE);
+    adjWatchLayout.setVisibility(View.INVISIBLE);
+  }
+
+  /**
+   * @brief showWatchAdjView
+   *
+   * Show watch adjust view
+   *
+   * @return NULL
+   */
+  private void showWatchAdjView()
+  {
+    btnScanBLEDevice.setVisibility(View.INVISIBLE);
+    adjWatchLayout.setVisibility(View.VISIBLE);
   }
 }
