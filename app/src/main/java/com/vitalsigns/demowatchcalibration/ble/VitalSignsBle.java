@@ -73,7 +73,8 @@ public class VitalSignsBle {
     }
   };
 
-  private BleCmdService.OnAckListener onAckListener = new BleCmdService.OnAckListener() {
+  private BleCmdService.OnAckListener onAckListener = new BleCmdService.OnAckListener()
+  {
     @Override
     public void ackBleWatchSyncTime(boolean b) {
 
@@ -122,6 +123,12 @@ public class VitalSignsBle {
     @Override
     public void ackPasswordCheck(boolean b) {
 
+    }
+
+    @Override
+    public void ackPointer(boolean ack)
+    {
+      Log.d(LOG_TAG, String.format("ackPointer(%s)", Boolean.toString(ack)));
     }
   };
 
