@@ -8,9 +8,12 @@ import android.support.percent.PercentRelativeLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.vitalsigns.demowatchcalibration.ble.VitalSignsBle;
 import com.vitalsigns.sdk.ble.scan.DeviceListFragment;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity
       /// [CC] : Ble module initial ; 11/09/2017
       bleInit();
     }
+
+    textSizeInitial();
   }
 
   @Override
@@ -347,5 +352,41 @@ public class MainActivity extends AppCompatActivity
   {
     btnScanBLEDevice.setVisibility(View.INVISIBLE);
     adjWatchLayout.setVisibility(View.VISIBLE);
+  }
+
+  /**
+   * @brief textSizeInitial
+   *
+   * Initial text size
+   *
+   * @return NULL
+   */
+  private void textSizeInitial()
+  {
+    final PercentRelativeLayout percentRelativeLayout;
+    percentRelativeLayout = (PercentRelativeLayout) findViewById(R.id.adj_pointer_layout);
+
+    percentRelativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override
+      public void onGlobalLayout() {
+        TextView textView2;
+        TextView textView;
+        TextView textViewHr;
+        TextView textViewMin;
+        TextView textViewSec;
+
+        textView2 = (TextView)findViewById(R.id.adj_pointer_title2);
+        textView = (TextView)findViewById(R.id.adj_pointer_title);
+        textViewHr = (TextView)findViewById(R.id.adj_hour_pointer_title);
+        textViewMin = (TextView)findViewById(R.id.adj_minute_pointer_title);
+        textViewSec = (TextView)findViewById(R.id.adj_second_pointer_title);
+
+        textView2.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+        textViewHr.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+        textViewMin.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+        textViewSec.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+      }
+    });
   }
 }

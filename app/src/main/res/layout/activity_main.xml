@@ -22,15 +22,23 @@
     android:layout_centerInParent="true"
     android:visibility="gone">
     <TextView
-      android:id="@+id/adj_minute_pointer_title2"
+      android:id="@+id/adj_pointer_title2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Adjust watch to 3:00"
-      android:textSize="20dp"
+      android:text="Adjust hour and minute pointer to 6"
+      android:gravity="center"
+      android:layout_centerHorizontal="true"
+      android:layout_above="@+id/adj_pointer_title"
+      android:layout_marginTop="10dp"/>
+    <TextView
+      android:id="@+id/adj_pointer_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text=", small pointer to 0"
       android:gravity="center"
       android:layout_centerHorizontal="true"
       android:layout_above="@+id/adj_hour_pointer_layout"
-      android:layout_margin="10dp"/>
+      android:layout_marginBottom="10dp"/>
     <android.support.percent.PercentRelativeLayout
       android:id="@+id/adj_hour_pointer_layout"
       app:layout_widthPercent="70%"
@@ -43,7 +51,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="  Hour pointer :"
-        android:textSize="20dp"
         android:gravity="center"
         android:layout_alignParentStart="true"/>
       <Button
@@ -81,7 +88,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Minute pointer :"
-        android:textSize="20dp"
         android:gravity="center"
         android:layout_centerVertical="true"/>
       <Button
@@ -120,7 +126,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Second pointer :"
-        android:textSize="20dp"
         android:gravity="center"
         android:layout_centerVertical="true"/>
       <Button
