@@ -1,7 +1,9 @@
 package com.vitalsigns.demowatchcalibration;
 
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.percent.PercentRelativeLayout;
@@ -9,15 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vitalsigns.demowatchcalibration.ble.VitalSignsBle;
 import com.vitalsigns.sdk.ble.scan.DeviceListFragment;
 import com.vitalsigns.sdk.utility.RequestPermission;
+import com.vitalsigns.sdk.utility.Utility;
 
 import static com.vitalsigns.sdk.utility.RequestPermission.PERMISSION_REQUEST_COARSE_LOCATION;
 
@@ -28,6 +34,7 @@ public class MainActivity extends AppCompatActivity
   private VitalSignsBle mVitalSignsBle = null;
   private Button btnScanBLEDevice;
   private PercentRelativeLayout adjWatchLayout;
+  private ProgressDialog mProgressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -124,6 +131,7 @@ public class MainActivity extends AppCompatActivity
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
+          hideProgressDialog();
           if(mVitalSignsBle == null)
           {
             Log.d(LOG_TAG, "mVitalSignsBle == null");
@@ -145,6 +153,12 @@ public class MainActivity extends AppCompatActivity
         public void run() {
           Log.d(LOG_TAG, "onDisconnect ");
 
+          if(!strError.equals("bleGattState"))
+          {
+            Toast.makeText(MainActivity.this, "Connection (" + strError + ")", Toast.LENGTH_LONG).show();
+          }
+
+          hideProgressDialog();
           if(!TextUtils.isEmpty(strError))
           {
             if(mVitalSignsBle != null)
@@ -192,6 +206,8 @@ public class MainActivity extends AppCompatActivity
       /// [CC] : Connect BLE device ; 08/21/2017
       Log.d(LOG_TAG, "Device address is " + s);
       mVitalSignsBle.connect(s);
+
+      showProgressDialog(getResources().getString(R.string.connect_device));
     }
   }
 
@@ -381,11 +397,68 @@ public class MainActivity extends AppCompatActivity
         textViewMin = (TextView)findViewById(R.id.adj_minute_pointer_title);
         textViewSec = (TextView)findViewById(R.id.adj_second_pointer_title);
 
-        textView2.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
-        textViewHr.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
-        textViewMin.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
-        textViewSec.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight()* 0.03f);
+        textView2.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight() * 0.025f);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight() * 0.025f);
+        textViewHr.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight() * 0.025f);
+        textViewMin.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight() * 0.025f);
+        textViewSec.setTextSize(TypedValue.COMPLEX_UNIT_SP, percentRelativeLayout.getHeight() * 0.025f);
+      }
+    });
+  }
+
+
+  /**
+   * @brief showProgressDialog
+   *
+   * Show progress dialog
+   *
+   * @return NULL
+   */
+  private void showProgressDialog(final String strMsg) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (mProgressDialog == null)
+        {
+          mProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogStyle);
+          mProgressDialog.setIndeterminate(true);
+          mProgressDialog.setCanceledOnTouchOutside(false);
+          mProgressDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
+          {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
+            {
+              if(mProgressDialog != null && mProgressDialog.isShowing())
+              {
+                /// [CC] : Do nothing if true ; 11/28/2017
+                return (true);
+              }
+              return (false);
+            }
+          });
+        }
+
+        mProgressDialog.setMessage(strMsg);
+        mProgressDialog.show();
+      }
+    });
+  }
+
+  /**
+   * @brief hideProgressDialog
+   *
+   * Hide progress dialog
+   *
+   * @return NULL
+   */
+  private void hideProgressDialog() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if ((mProgressDialog != null) && (mProgressDialog.isShowing()))
+        {
+          mProgressDialog.dismiss();
+        }
       }
     });
   }
