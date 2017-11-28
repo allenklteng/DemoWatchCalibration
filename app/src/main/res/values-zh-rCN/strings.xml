@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name" translatable="false">DemoWatchCalibration</string>
+  <string name="scan_ble_device">扫描 BLE 装置</string>
+  <string name="connect_device">连线中...</string>
+  <string name="adjust_pointer_title_1">调整时针与分针至数字 6</string>
+  <string name="adjust_pointer_title_2">, 小针至数字 0</string>
+  <string name="hour_pointer">时针</string>
+  <string name="minute_pointer">分针</string>
+  <string name="second_pointer">小针</string>
+  <string name="btn_ok">好</string>
+  <string name="btn_cancel">取消</string>
+</resources>

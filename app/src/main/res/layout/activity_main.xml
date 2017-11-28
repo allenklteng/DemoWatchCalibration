@@ -14,18 +14,17 @@
     android:layout_centerInParent="true"
     android:layout_centerHorizontal="true"
     android:text="@string/scan_ble_device"/>
-
   <android.support.percent.PercentRelativeLayout
     android:id="@+id/adj_pointer_layout"
     app:layout_widthPercent="100%"
-    app:layout_heightPercent="70%"
+    app:layout_heightPercent="80%"
     android:layout_centerInParent="true"
     android:visibility="gone">
     <TextView
       android:id="@+id/adj_pointer_title2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Adjust hour and minute pointer to 6"
+      android:text="@string/adjust_pointer_title_1"
       android:gravity="center"
       android:layout_centerHorizontal="true"
       android:layout_above="@+id/adj_pointer_title"
@@ -34,11 +33,11 @@
       android:id="@+id/adj_pointer_title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text=", small pointer to 0"
+      android:text="@string/adjust_pointer_title_2"
       android:gravity="center"
       android:layout_centerHorizontal="true"
       android:layout_above="@+id/adj_hour_pointer_layout"
-      android:layout_marginBottom="10dp"/>
+      android:layout_marginBottom="20dp"/>
     <android.support.percent.PercentRelativeLayout
       android:id="@+id/adj_hour_pointer_layout"
       app:layout_widthPercent="70%"
@@ -47,12 +46,21 @@
       android:layout_above="@+id/adj_minute_pointer_layout"
       android:layout_margin="10dp">
       <TextView
+        android:id="@+id/adj_hour_pointer_layout_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
+      <TextView
         android:id="@+id/adj_hour_pointer_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="  Hour pointer :"
+        android:text="@string/hour_pointer"
         android:gravity="center"
-        android:layout_alignParentStart="true"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/adj_hour_pointer_layout_center"
+        android:layout_marginEnd="10dp"/>
       <Button
         android:id="@+id/adj_hour_pointer_inc"
         android:layout_width="30dp"
@@ -61,7 +69,7 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_toStartOf="@+id/adj_hour_pointer_dec"
+        android:layout_toEndOf="@+id/adj_hour_pointer_layout_center"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
@@ -73,7 +81,8 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/adj_hour_pointer_inc"
+        android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"/>
     </android.support.percent.PercentRelativeLayout>
@@ -84,12 +93,21 @@
       android:layout_centerInParent="true"
       android:layout_margin="10dp">
       <TextView
+        android:id="@+id/adj_minute_pointer_layout_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
+      <TextView
         android:id="@+id/adj_minute_pointer_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Minute pointer :"
+        android:text="@string/minute_pointer"
         android:gravity="center"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/adj_minute_pointer_layout_center"
+        android:layout_marginEnd="10dp"/>
       <Button
         android:id="@+id/adj_minute_pointer_inc"
         android:layout_width="30dp"
@@ -98,7 +116,7 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_toStartOf="@+id/adj_minute_pointer_dec"
+        android:layout_toEndOf="@+id/adj_minute_pointer_layout_center"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
@@ -110,7 +128,8 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/adj_minute_pointer_inc"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"/>
     </android.support.percent.PercentRelativeLayout>
@@ -119,15 +138,25 @@
       app:layout_widthPercent="70%"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
-      android:layout_margin="10dp"
+      android:layout_marginTop="10dp"
+      android:layout_marginBottom="20dp"
       android:layout_below="@+id/adj_minute_pointer_layout">
+      <TextView
+        android:id="@+id/adj_second_pointer_layout_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
       <TextView
         android:id="@+id/adj_second_pointer_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Second pointer :"
+        android:text="@string/second_pointer"
         android:gravity="center"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/adj_second_pointer_layout_center"
+        android:layout_marginEnd="10dp"/>
       <Button
         android:id="@+id/adj_second_pointer_inc"
         android:layout_width="30dp"
@@ -136,7 +165,7 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_toStartOf="@+id/adj_second_pointer_dec"
+        android:layout_toEndOf="@+id/adj_second_pointer_layout_center"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
@@ -148,26 +177,33 @@
         android:textSize="20dp"
         android:gravity="center"
         android:background="@drawable/sdk_button_arc"
-        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/adj_second_pointer_inc"
+        android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"/>
     </android.support.percent.PercentRelativeLayout>
-
+    <TextView
+      android:id="@+id/btn_center"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/adj_second_pointer_layout"
+      android:layout_centerInParent="true"/>
     <Button
       android:id="@+id/adj_pointer_cancel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_toEndOf="@+id/adj_pointer_ok"
+      android:layout_toStartOf="@+id/btn_center"
       android:layout_below="@+id/adj_second_pointer_layout"
-      android:text="CANCEL"
+      android:text="@string/btn_cancel"
       android:layout_margin="10dp"/>
     <Button
       android:id="@+id/adj_pointer_ok"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
+      android:layout_toEndOf="@+id/btn_center"
       android:layout_below="@+id/adj_second_pointer_layout"
-      android:text="OK"
+      android:text="@string/btn_ok"
       android:layout_margin="10dp"/>
   </android.support.percent.PercentRelativeLayout>
 </android.support.percent.PercentRelativeLayout>

@@ -145,6 +145,10 @@ public class VitalSignsBle {
     @Override
     public void bleGattState() {
       Log.d(LOG_TAG, "bleGattState()");
+      if(mBleEvent != null)
+      {
+        mBleEvent.onDisconnect("bleGattState");
+      }
     }
 
     @Override
