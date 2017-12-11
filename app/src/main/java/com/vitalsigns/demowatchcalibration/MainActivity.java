@@ -11,15 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vitalsigns.demowatchcalibration.ble.VitalSignsBle;
 import com.vitalsigns.sdk.ble.scan.DeviceListFragment;
 import com.vitalsigns.sdk.utility.RequestPermission;
+import com.vitalsigns.sdk.utility.Utility;
 
 import static com.vitalsigns.sdk.utility.RequestPermission.PERMISSION_REQUEST_COARSE_LOCATION;
 
@@ -68,6 +72,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     textSizeInitial();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return (true);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if(id == R.id.show_sdk_version)
+    {
+      Toast.makeText(MainActivity.this,
+                     ("SDK Version : " + Utility.SdkVersion()),
+                     Toast.LENGTH_LONG)
+           .show();
+      return (true);
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
