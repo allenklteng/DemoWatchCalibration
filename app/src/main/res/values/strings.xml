@@ -2,8 +2,8 @@
   <string name="app_name">DemoWatchCalibration</string>
   <string name="scan_ble_device">Scan BLE device</string>
   <string name="connect_device">Connecting to device...</string>
-  <string name="adjust_pointer_title_1">Adjust hour and minute pointer to 6</string>
-  <string name="adjust_pointer_title_2">, small pointer to 0</string>
+  <string name="adjust_pointer_title_1">Adjust hour pointer to 6</string>
+  <string name="adjust_pointer_title_2">, minute and small pointer to 12</string>
   <string name="hour_pointer">Hour pointer</string>
   <string name="minute_pointer">Minute pointer</string>
   <string name="second_pointer">Second pointer</string>

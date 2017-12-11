@@ -4,11 +4,10 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.percent.PercentRelativeLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -16,14 +15,11 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vitalsigns.demowatchcalibration.ble.VitalSignsBle;
 import com.vitalsigns.sdk.ble.scan.DeviceListFragment;
 import com.vitalsigns.sdk.utility.RequestPermission;
-import com.vitalsigns.sdk.utility.Utility;
 
 import static com.vitalsigns.sdk.utility.RequestPermission.PERMISSION_REQUEST_COARSE_LOCATION;
 
@@ -48,10 +44,10 @@ public class MainActivity extends AppCompatActivity
     /// [CC] : Initial the component of scan button and adjust watch layout ; 11/09/2017
     viewComponentInitial();
   }
-
+  
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     switch(requestCode)
     {
       case PERMISSION_REQUEST_COARSE_LOCATION:
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity
   protected void onStart() {
     super.onStart();
 
-    if(RequestPermission.accessCoarseLocation(this) == true)
+    if(RequestPermission.accessCoarseLocation(this))
     {
       /// [CC] : Ble module initial ; 11/09/2017
       bleInit();
@@ -151,23 +147,16 @@ public class MainActivity extends AppCompatActivity
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          Log.d(LOG_TAG, "onDisconnect ");
-
-          if(!strError.equals("bleGattState"))
-          {
-            Toast.makeText(MainActivity.this, "Connection (" + strError + ")", Toast.LENGTH_LONG).show();
-          }
+          Log.d(LOG_TAG, "onDisconnect - " + strError);
 
           hideProgressDialog();
-          if(!TextUtils.isEmpty(strError))
+          
+          if(mVitalSignsBle != null)
           {
-            if(mVitalSignsBle != null)
-            {
-              mVitalSignsBle.disconnect();
-            }
-
-            scanBleDevice();
+            mVitalSignsBle.disconnect();
           }
+  
+          scanBleDevice();
         }
       });
     }
@@ -252,7 +241,7 @@ public class MainActivity extends AppCompatActivity
       @Override
       public void onClick(View view) {
         /// [CC] : Permission request ; 11/06/2017
-        if(RequestPermission.accessCoarseLocation(MainActivity.this) == true)
+        if(RequestPermission.accessCoarseLocation(MainActivity.this))
         {
           showScanBleList();
         }

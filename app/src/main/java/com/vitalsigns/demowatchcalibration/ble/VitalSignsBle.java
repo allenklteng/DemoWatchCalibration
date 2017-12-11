@@ -360,7 +360,7 @@ public class VitalSignsBle {
    * This command will tell watch current pointer position
    * The three argument means the degree of pointer ("12" is degree 0 and clockwise)
    * hour  180 : hour pointer point to "6"
-   * minute 180 : minute pointer point to "6"
+   * minute 0 : minute pointer point to "12"
    * second 0 : second pointer point to 0
    *
    * @return NULL
@@ -369,7 +369,7 @@ public class VitalSignsBle {
   {
     if(mBleService != null)
     {
-      mBleService.CmdTimePos(180, 180, 0);
+      mBleService.CmdTimePos(180, 0, 0);
       bSendTimePosCmd = true;
     }
   }
